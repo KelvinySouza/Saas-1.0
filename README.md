@@ -5,15 +5,13 @@ Um sistema CRM SaaS multi-tenant construído com Flutter para suporte multiplata
 ## Downloads
 
 ### Aplicativos Móveis
-- **Android APK**: [Baixar na Google Play Store](https://play.google.com/store) (em breve) ou construa usando as instruções em [BUILD_GUIDE.md](BUILD_GUIDE.md)
-- **iOS App**: [Baixar na App Store](https://apps.apple.com) (em breve) ou construa usando as instruções em [BUILD_GUIDE.md](BUILD_GUIDE.md)
+Para baixar os apps, siga as instruções em [BUILD_GUIDE.md](BUILD_GUIDE.md) para construir e instalar localmente.
 
 ### Aplicativos Desktop
-- **macOS**: Construa usando [BUILD_GUIDE.md](BUILD_GUIDE.md)
-- **Windows**: Construa usando [BUILD_GUIDE.md](BUILD_GUIDE.md)
+Construa usando [BUILD_GUIDE.md](BUILD_GUIDE.md).
 
 ### Aplicativo Web
-Acesse a versão web em [web/index.html](web/index.html) ou faça deploy usando build web do Flutter.
+Acesse a versão web em https://kelvinysouza.github.io/Saas-1.0/ (ative GitHub Pages no repositório para /web).
 
 ## Documentação
 
