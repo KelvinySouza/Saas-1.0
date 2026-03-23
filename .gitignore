@@ -1,0 +1,52 @@
+# .gitignore - Arquivos ignorados no Git
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Flutter
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+*.lock
+
+# iOS/macOS
+ios/
+macos/
+
+# Android
+android/
+.gradle/
+
+# Web
+web/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+
+# Dependencies
+pubspec.lock
+package-lock.json
+
+# Misc
+*.log
+*.pem
+*.key
+secrets/
