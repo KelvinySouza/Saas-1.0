@@ -34,6 +34,7 @@ Crie um arquivo `.env` na raiz do projeto com:
 SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_SERVICE_KEY=sua_service_role_key
 JWT_SECRET=qualquer_string_longa_e_aleatoria
+OPENAI_KEY=sua_chave_openai_aqui
 PORT=3000
 ```
 

@@ -405,6 +405,44 @@ app.post('/api/warranties', auth, async (req, res) => {
 });
 
 // ============================================================
+// IA — Assistente Inteligente
+// ============================================================
+app.post('/api/ai', auth, async (req, res) => {
+  const { prompt } = req.body;
+  if (!prompt) return res.status(400).json({ error: 'prompt obrigatório' });
+
+  const openaiKey = process.env.OPENAI_KEY;
+  if (!openaiKey) return res.status(500).json({ error: 'OPENAI_KEY não configurado' });
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${openaiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 500,
+        temperature: 0.7,
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      return res.status(500).json({ error: 'Erro OpenAI: ' + err });
+    }
+
+    const data = await response.json();
+    const answer = data.choices?.[0]?.message?.content || '';
+    res.json({ answer });
+  } catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+});
+
+// ============================================================
 // FINANCEIRO
 // ============================================================
 app.get('/api/financial/summary', auth, async (req, res) => {

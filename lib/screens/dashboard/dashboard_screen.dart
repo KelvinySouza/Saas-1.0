@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import '../../services/company_service.dart';
 import '../auth/login_screen.dart';
+import 'ai_assistant_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -234,8 +235,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildSettings() {
-    return const Center(
-      child: Text('Tela de Configurações (em desenvolvimento)'),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Configurações', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.smart_toy),
+              title: const Text('Abrir Assistente IA'),
+              subtitle: const Text('Use IA para sugerir textos, ações e resumo de vendas'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AIAssistantScreen()),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text('Outras configurações em desenvolvimento...', style: TextStyle(color: Colors.grey)),
+        ],
+      ),
     );
   }
 }

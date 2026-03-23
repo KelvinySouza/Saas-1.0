@@ -5,13 +5,25 @@ Um sistema CRM SaaS multi-tenant construído com Flutter para suporte multiplata
 ## Downloads
 
 ### Aplicativos Móveis
-Para baixar os apps, siga as instruções em [BUILD_GUIDE.md](BUILD_GUIDE.md) para construir e instalar localmente.
+Para instalar sem Play Store/App Store, construa os APKs/IPAs localmente:
+
+- **Android APK**: Execute `flutter build apk` e instale o arquivo `build/app/outputs/flutter-apk/app-release.apk` no dispositivo.
+- **iOS IPA**: Execute `flutter build ipa` (requer Xcode e conta Apple Developer) e instale via TestFlight ou sideloading.
 
 ### Aplicativos Desktop
-Construa usando [BUILD_GUIDE.md](BUILD_GUIDE.md).
+Construa executáveis para instalação direta:
+
+- **macOS**: Execute `flutter build macos` e distribua a pasta `build/macos/Build/Products/Release/Overall Management.app`.
+- **Windows**: Execute `flutter build windows` e distribua a pasta `build/windows/runner/Release`.
 
 ### Aplicativo Web
 Acesse a versão web em https://kelvinysouza.github.io/Saas-1.0/ (ative GitHub Pages no repositório para /web).
+
+## Assistente de IA
+
+- O app inclui um assistente IA integrado (dashboard > configurações > Assistente IA).
+- O backend consome OpenAI via endpoint `POST /api/ai`.
+- Configure `OPENAI_KEY` no `.env` (veja SETUP.md).
 
 ## Documentação
 
