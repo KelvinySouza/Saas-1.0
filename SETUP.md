@@ -40,7 +40,16 @@ PORT=3000
 **Como obter as chaves:**
 - **SUPABASE_URL**: Project Settings → API → Project URL
 - **SUPABASE_SERVICE_KEY**: Project Settings → API → Service Role Secret
-- **JWT_SECRET**: Crie uma string aleatória (ex: `openssl rand -base64 32`)
+- **JWT_SECRET**: Crie uma string aleatória forte (ex: `openssl rand -base64 32`)
+
+## Segurança
+
+- **Row Level Security (RLS)**: Ative RLS em todas as tabelas do Supabase e configure políticas para isolamento multi-tenant.
+- **Chaves de API**: Use a chave `anon` para o cliente Flutter e `service_role` apenas no servidor.
+- **HTTPS**: Configure HTTPS no servidor de produção.
+- **Auditoria**: Os logs de auditoria são armazenados na tabela `audit_logs`.
+- **Rate Limiting**: Implementado para prevenir ataques de força bruta.
+- **Validação**: Entradas são validadas no backend.
 
 ## 5. Instalar Dependências
 

@@ -8,20 +8,67 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { createClient } = require('@supabase/supabase-js');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const morgan = require('morgan');
+const { body, validationResult } = require('express-validator');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+
+// Segurança
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+}));
+app.use(morgan('combined')); // Log de auditoria
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS || 'http://localhost:3000', // Configure para produção
+  credentials: true,
+}));
+app.use(express.json({ limit: '10mb' })); // Limite de payload
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // Limite de 100 requisições por IP
+  message: 'Muitas requisições, tente novamente mais tarde.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', limiter);
+
+// Rate limiting mais restritivo para auth
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: 'Muitas tentativas de login, tente novamente mais tarde.',
+});
+// Força HTTPS em produção
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    } else {
+      next();
+    }
+  });
+}
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY   // service_role key (server-side)
 );
 
-const JWT_SECRET = process.env.JWT_SECRET || 'troque_por_segredo_forte';
-const JWT_EXPIRES = '8h';
-const REFRESH_EXPIRES = '30d';
+const JWT_SECRET = process.env.JWT_SECRET || 'f4a8b9c2d3e4f5678901234567890abcdef1234567890abcdef1234567890abcdef'; // Use uma chave forte e única
+const JWT_EXPIRES = '1h'; // Reduzido para mais segurança
+const REFRESH_EXPIRES = '7d';
 
 // ============================================================
 // MIDDLEWARE — autenticação JWT
@@ -62,10 +109,17 @@ const auditLog = (action, entity) => async (req, res, next) => {
 // ============================================================
 // AUTH — Login
 // ============================================================
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', [
+  body('slug').isLength({ min: 3, max: 50 }).withMessage('Slug inválido'),
+  body('email').isEmail().normalizeEmail().withMessage('Email inválido'),
+  body('password').isLength({ min: 8 }).withMessage('Senha deve ter pelo menos 8 caracteres'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { slug, email, password } = req.body;
-  if (!slug || !email || !password)
-    return res.status(400).json({ error: 'Campos obrigatórios' });
 
   // Buscar empresa pelo slug
   const { data: company } = await supabase

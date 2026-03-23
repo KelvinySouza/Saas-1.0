@@ -1,17 +1,35 @@
-# crm_saas
+# Overall Management
 
-A new Flutter project.
+Um sistema CRM SaaS multi-tenant construído com Flutter para suporte multiplataforma (iOS, Android, Web, macOS, Windows).
 
-## Getting Started
+## Downloads
 
-This project is a starting point for a Flutter application.
+### Aplicativos Móveis
+- **Android APK**: [Baixar na Google Play Store](https://play.google.com/store) (em breve) ou construa usando as instruções em [BUILD_GUIDE.md](BUILD_GUIDE.md)
+- **iOS App**: [Baixar na App Store](https://apps.apple.com) (em breve) ou construa usando as instruções em [BUILD_GUIDE.md](BUILD_GUIDE.md)
 
-A few resources to get you started if this is your first Flutter project:
+### Aplicativos Desktop
+- **macOS**: Construa usando [BUILD_GUIDE.md](BUILD_GUIDE.md)
+- **Windows**: Construa usando [BUILD_GUIDE.md](BUILD_GUIDE.md)
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+### Aplicativo Web
+Acesse a versão web em [web/index.html](web/index.html) ou faça deploy usando build web do Flutter.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Documentação
+
+- [Guia de Configuração](SETUP.md)
+- [Guia de Build](BUILD_GUIDE.md)
+- [Plano de Desenvolvimento](PLANO_DESENVOLVIMENTO.md)
+- [Esquema do Banco de Dados](schema.sql)
+
+## Começando
+
+Consulte [SETUP.md](SETUP.md) para instruções de configuração.
+
+Para desenvolvimento Flutter, veja a [documentação oficial](https://docs.flutter.dev/).
+
+## Recursos
+
+- [Aprenda Flutter](https://docs.flutter.dev/get-started/learn-flutter)
+- [Escreva seu primeiro app Flutter](https://docs.flutter.dev/get-started/codelab)
+- [Recursos de aprendizado Flutter](https://docs.flutter.dev/reference/learning-resources)
