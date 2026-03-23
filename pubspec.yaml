@@ -1,0 +1,59 @@
+name: crm_saas
+description: CRM SaaS Multi-tenant — Flutter App
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Supabase
+  supabase_flutter: ^2.3.0
+
+  # HTTP
+  http: ^1.2.0
+  dio: ^5.4.0
+
+  # Estado e navegação
+  provider: ^6.1.1
+  go_router: ^13.0.0
+
+  # Armazenamento local
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+
+  # UI
+  google_fonts: ^6.1.0
+  fl_chart: ^0.67.0            # gráficos do dashboard
+  flutter_svg: ^2.0.9
+
+  # Notificações
+  firebase_messaging: ^15.0.0
+  flutter_local_notifications: ^17.1.1
+
+  # Utilidades
+  intl: ^0.19.0                # formatação de datas e moeda
+  uuid: ^4.3.3
+  image_picker: ^1.0.7
+  cached_network_image: ^3.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Medium.ttf  weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf     weight: 700
