@@ -1,0 +1,33 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /var/www/saas-1.0
+            git pull origin main
+            
+            # 1. Atualizar o Backend
+            npm install --production
+            pm2 restart saas-backend || pm2 start server.js --name "saas-backend"
+            
+            # 2. Atualizar o Frontend (Build React)
+            cd react-web
+            npm install
+            npm run build
+            
+            # 3. Reiniciar Nginx (se necessário)
+            sudo systemctl reload nginx
