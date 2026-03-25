@@ -3,6 +3,7 @@
 //  CRUD de configurações e dados da empresa
 // ============================================================
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CompanyModel {
@@ -64,7 +65,7 @@ class CompanyService {
 
       return res != null ? CompanyModel.fromJson(res) : null;
     } catch (e) {
-      print('Erro ao buscar empresa: $e');
+      debugPrint('Erro ao buscar empresa: $e');
       return null;
     }
   }
@@ -90,9 +91,67 @@ class CompanyService {
 
       return true;
     } catch (e) {
-      print('Erro ao atualizar empresa: $e');
+      debugPrint('Erro ao atualizar empresa: $e');
       return false;
     }
+  }
+
+  /// Persiste dados do wizard de onboarding (empresa + flags no perfil).
+  Future<void> saveOnboarding({
+    required String name,
+    required String slug,
+    required String email,
+    required String phone,
+    required String cnpj,
+    required String address,
+    required String city,
+    required String businessType,
+    required String primaryColor,
+    required String whatsappToken,
+    required String instagramToken,
+    required String welcomeMessage,
+  }) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) {
+      throw Exception('Sessão inválida');
+    }
+
+    final row = await _supabase
+        .from('users')
+        .select('company_id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    if (row == null) {
+      throw Exception('Perfil de usuário não encontrado');
+    }
+
+    final companyId = row['company_id'] as String;
+
+    final onboardingPayload = {
+      'email': email,
+      'phone': phone,
+      'cnpj': cnpj,
+      'address': address,
+      'city': city,
+      'business_type': businessType,
+      'primary_color': primaryColor,
+      'whatsapp_token': whatsappToken,
+      'instagram_token': instagramToken,
+      'welcome_message': welcomeMessage,
+      'onboarding_completed': true,
+      'onboarding_completed_at': DateTime.now().toIso8601String(),
+    };
+
+    await _supabase.from('companies').update({
+      'name': name,
+      'slug': slug,
+      'config': onboardingPayload,
+    }).eq('id', companyId);
+
+    await _supabase.from('users').update({
+      'onboarding_completed': true,
+    }).eq('id', user.id);
   }
 
   // Completa onboarding da empresa
@@ -105,7 +164,7 @@ class CompanyService {
 
       return await updateCompany(companyId, config: config);
     } catch (e) {
-      print('Erro ao completar onboarding: $e');
+      debugPrint('Erro ao completar onboarding: $e');
       return false;
     }
   }

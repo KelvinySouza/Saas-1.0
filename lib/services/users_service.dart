@@ -3,6 +3,7 @@
 //  CRUD de usuários dentro de uma empresa
 // ============================================================
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 
@@ -20,7 +21,7 @@ class UsersService {
           _supabase.auth.currentUser?.userMetadata?['company_id'] as String?;
 
       if (finalCompanyId == null) {
-        print('Company ID não encontrado');
+        debugPrint('Company ID não encontrado');
         return [];
       }
 
@@ -34,7 +35,7 @@ class UsersService {
           .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print('Erro ao buscar usuários: $e');
+      debugPrint('Erro ao buscar usuários: $e');
       return [];
     }
   }
@@ -50,7 +51,7 @@ class UsersService {
 
       return res != null ? UserModel.fromJson(res) : null;
     } catch (e) {
-      print('Erro ao buscar usuário: $e');
+      debugPrint('Erro ao buscar usuário: $e');
       return null;
     }
   }
@@ -71,11 +72,14 @@ class UsersService {
         ),
       );
 
+      final newAuthUser = authRes.user;
+      if (newAuthUser == null) return null;
+
       // Cria registro do usuário
       final userRes = await _supabase
           .from('users')
           .insert({
-            'id': authRes.user.id,
+            'id': newAuthUser.id,
             'company_id': companyId,
             'email': data['email'],
             'full_name': data['full_name'] ?? '',
@@ -88,7 +92,7 @@ class UsersService {
 
       return UserModel.fromJson(userRes);
     } catch (e) {
-      print('Erro ao criar usuário: $e');
+      debugPrint('Erro ao criar usuário: $e');
       return null;
     }
   }
@@ -103,7 +107,7 @@ class UsersService {
 
       return true;
     } catch (e) {
-      print('Erro ao atualizar usuário: $e');
+      debugPrint('Erro ao atualizar usuário: $e');
       return false;
     }
   }
@@ -122,7 +126,7 @@ class UsersService {
 
       return true;
     } catch (e) {
-      print('Erro ao deletar usuário: $e');
+      debugPrint('Erro ao deletar usuário: $e');
       return false;
     }
   }
@@ -138,7 +142,7 @@ class UsersService {
 
       return res != null ? UserModel.fromJson(res) : null;
     } catch (e) {
-      print('Erro ao buscar por email: $e');
+      debugPrint('Erro ao buscar por email: $e');
       return null;
     }
   }

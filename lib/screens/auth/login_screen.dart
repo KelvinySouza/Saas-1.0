@@ -97,7 +97,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 16, offset: const Offset(0, 4)),
+                      BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
                     ],
                   ),
                   child: Form(
@@ -114,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _slugCtrl,
                           label: 'ID da empresa',
                           hint: 'ex: techbrasil',
-                          prefixIcon: Icons.business_outlined,
+                          prefixIcon: const Icon(Icons.business_outlined),
                           validator: (v) => v!.isEmpty ? 'Informe o ID da empresa' : null,
                         ),
                         const SizedBox(height: 14),
@@ -124,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _emailCtrl,
                           label: 'Email',
                           hint: 'seu@email.com',
-                          prefixIcon: Icons.email_outlined,
+                          prefixIcon: const Icon(Icons.email_outlined),
                           keyboardType: TextInputType.emailAddress,
                           validator: (v) => v!.isEmpty ? 'Informe o email' : null,
                         ),
@@ -135,7 +139,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _passCtrl,
                           label: 'Senha',
                           hint: '••••••••',
-                          prefixIcon: Icons.lock_outline,
+                          prefixIcon: const Icon(Icons.lock_outline),
+
                           obscureText: _obscurePass,
                           suffixIcon: IconButton(
                             icon: Icon(_obscurePass ? Icons.visibility_off : Icons.visibility, size: 20),

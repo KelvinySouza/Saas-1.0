@@ -55,7 +55,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         address: _addressCtrl.text,
         city: _cityCtrl.text,
         businessType: _businessType,
-        primaryColor: '#${_primaryColor.value.toRadixString(16).substring(2).toUpperCase()}',
+        primaryColor:
+            '#${(_primaryColor.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}',
         whatsappToken: _whatsappCtrl.text,
         instagramToken: _instagramCtrl.text,
         welcomeMessage: _welcomeMsgCtrl.text,
@@ -113,7 +114,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 16, offset: const Offset(0,4)),
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: _buildStep(),
@@ -179,6 +184,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         _row([
           CRMTextField(controller: _cnpjCtrl, label: 'CNPJ (opcional)', hint: '00.000.000/0001-00'),
           DropdownButtonFormField<String>(
+            // Seleção controlada pelo estado; initialValue não reflete mudanças de `setState` neste wizard.
+            // ignore: deprecated_member_use
             value: _businessType,
             decoration: const InputDecoration(labelText: 'Setor', border: OutlineInputBorder()),
             items: ['tecnologia','varejo','servicos','saude','educacao','outro']

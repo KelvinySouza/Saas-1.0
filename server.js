@@ -28,10 +28,16 @@ app.use(helmet({
   },
 }));
 app.use(morgan('combined')); // Log de auditoria
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS || 'http://localhost:3000', // Configure para produção
+const corsOptions = {
+  // Em desenvolvimento, qualquer origem (ex.: Flutter web em porta aleatória).
+  // Em produção, defina ALLOWED_ORIGINS com URLs separadas por vírgula.
+  origin:
+    process.env.NODE_ENV === 'production'
+      ? (process.env.ALLOWED_ORIGINS?.split(',').map((s) => s.trim()).filter(Boolean) ?? [])
+      : true,
   credentials: true,
-}));
+};
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' })); // Limite de payload
 
 // Rate limiting
@@ -89,6 +95,21 @@ const auth = async (req, res, next) => {
 };
 
 // Middleware de log de auditoria
+// Autenticação via JWT do Supabase Auth (mesmo token do app Flutter).
+const authSupabase = async (req, res, next) => {
+  const header = req.headers.authorization;
+  if (!header?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Token não fornecido' });
+  }
+  const accessToken = header.split(' ')[1];
+  const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+  if (error || !user) {
+    return res.status(401).json({ error: 'Token inválido ou expirado' });
+  }
+  req.supabaseUser = user;
+  next();
+};
+
 const auditLog = (action, entity) => async (req, res, next) => {
   res.on('finish', async () => {
     if (res.statusCode < 400) {
@@ -407,14 +428,26 @@ app.post('/api/warranties', auth, async (req, res) => {
 // ============================================================
 // IA — Assistente Inteligente
 // ============================================================
-app.post('/api/ai', auth, async (req, res) => {
+const AI_PROMPT_MAX = 12000;
+
+app.post('/api/ai', authSupabase, async (req, res) => {
   const { prompt } = req.body;
-  if (!prompt) return res.status(400).json({ error: 'prompt obrigatório' });
+  if (typeof prompt !== 'string' || !prompt.trim()) {
+    return res.status(400).json({ error: 'prompt obrigatório' });
+  }
+  if (prompt.length > AI_PROMPT_MAX) {
+    return res.status(400).json({ error: 'prompt muito longo' });
+  }
 
   const openaiKey = process.env.OPENAI_KEY;
-  if (!openaiKey) return res.status(500).json({ error: 'OPENAI_KEY não configurado' });
+  if (!openaiKey) return res.status(500).json({ error: 'Serviço de IA não configurado no servidor.' });
 
   try {
+    // Evita "travamento infinito" caso a OpenAI demore/exija conexão instável.
+    const controller = new AbortController();
+    const timeoutMs = 35000; // 35s: maior que o necessário pra um request típico
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -427,18 +460,24 @@ app.post('/api/ai', auth, async (req, res) => {
         max_tokens: 500,
         temperature: 0.7,
       }),
+      signal: controller.signal,
     });
 
+    clearTimeout(timeoutId);
     if (!response.ok) {
-      const err = await response.text();
-      return res.status(500).json({ error: 'Erro OpenAI: ' + err });
+      console.error('OpenAI HTTP', response.status);
+      return res.status(502).json({ error: 'Serviço de IA temporariamente indisponível.' });
     }
 
     const data = await response.json();
     const answer = data.choices?.[0]?.message?.content || '';
     res.json({ answer });
   } catch (error) {
-    res.status(500).json({ error: error.toString() });
+    console.error('POST /api/ai', error);
+    if (error && typeof error === 'object' && error.name === 'AbortError') {
+      return res.status(504).json({ error: 'Tempo excedido ao chamar o serviço de IA.' });
+    }
+    res.status(500).json({ error: 'Erro ao processar solicitação.' });
   }
 });
 

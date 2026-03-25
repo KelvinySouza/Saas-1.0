@@ -4,6 +4,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/auth_service.dart';
 import '../../services/company_service.dart';
 import '../auth/login_screen.dart';
@@ -30,8 +31,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadCompany() async {
-    // Aqui você buscaria o companyId do usuário autenticado
-    // Por ora, deixamos como exemplo
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null || !mounted) return;
+
+    final row = await Supabase.instance.client
+        .from('users')
+        .select('company_id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    if (row == null || !mounted) return;
+    final companyId = row['company_id'] as String;
+    final company = await _companyService.getCompany(companyId);
+    if (mounted) setState(() => _company = company);
   }
 
   Future<void> _logout() async {
@@ -106,7 +118,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Bem-vindo!',
+            _company != null
+                ? 'Bem-vindo, ${_company!.name}!'
+                : 'Bem-vindo!',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 24),
@@ -177,7 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }) {
     return Card(
       elevation: 0,
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),

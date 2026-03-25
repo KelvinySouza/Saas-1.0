@@ -1,6 +1,13 @@
 # Overall Management
 
-Um sistema CRM SaaS multi-tenant construído com Flutter para suporte multiplataforma (iOS, Android, Web, macOS, Windows).
+Um sistema CRM SaaS multi-tenant construído com Flutter para suporte multiplataforma (iOS, Android, Web, macOS, Windows). O painel **React** em `react-web/` usa o mesmo Supabase Auth e o mesmo endpoint `/api/ai` (Node) que o app Flutter.
+
+## Cliente Web (React)
+
+1. `cd react-web && cp .env.example .env` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`.
+2. Com o backend Node em `127.0.0.1:3000`, rode `npm install` e `npm run dev` (proxy `/api` → API local).
+3. Login: mesmo fluxo do Flutter (slug da empresa + email + senha). Com onboarding pendente, o React orienta concluir no Flutter ou ajustar `users.onboarding_completed` no Supabase.
+4. Produção: defina `VITE_API_BASE_URL` com a URL HTTPS do `server.js` se o site não estiver no mesmo domínio da API.
 
 ## Downloads
 

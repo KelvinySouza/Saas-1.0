@@ -97,7 +97,7 @@ class AuthService {
   }) async {
     try {
       // 1. Cria conta de autenticação
-      final authRes = await _supabase.auth.signUpWithPassword(
+      final authRes = await _supabase.auth.signUp(
         email: adminEmail,
         password: password,
       );

@@ -65,7 +65,7 @@ class _CRMButtonState extends State<CRMButton> {
       onPressed: widget.enabled && !widget.loading ? widget.onPressed : null,
       style: ElevatedButton.styleFrom(
         backgroundColor: bgColor,
-        disabledBackgroundColor: bgColor.withOpacity(0.5),
+        disabledBackgroundColor: bgColor.withValues(alpha: 0.5),
         foregroundColor: bgColor,
         padding: widget.padding ?? 
             const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
